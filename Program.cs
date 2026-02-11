@@ -1,4 +1,6 @@
 
+using GameTournamentAPI.Services;
+
 namespace GameTournamentAPI
 {
     public class Program
@@ -10,6 +12,7 @@ namespace GameTournamentAPI
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddSingleton<TournamentService>();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
