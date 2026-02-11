@@ -10,8 +10,10 @@ namespace GameTournamentAPI.Models
         public int MaxPlayers { get; set; }
         public DateTime Date { get; set; }
         public ICollection<GameDto> Games { get; set; } = new List<GameDto>();
-public static TournamentResponseDTO FromEntity(Tournament tournament)
-{
+        
+
+        public static TournamentResponseDTO FromEntity (Tournament tournament)
+        {
             return new TournamentResponseDTO
             {
                 Id = tournament.Id,
@@ -24,7 +26,7 @@ public static TournamentResponseDTO FromEntity(Tournament tournament)
                     Title = g.Title
                 }).ToList()
             };
+            }
         }
-    }
 
 }

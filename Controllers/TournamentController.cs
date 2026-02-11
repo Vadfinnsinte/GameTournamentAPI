@@ -19,6 +19,9 @@ namespace GameTournamentAPI.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<TournamentResponseDTO>> Get([FromQuery] string? title)
         {
+            try
+            {
+
             if (!string.IsNullOrWhiteSpace(title))
             {
                 var tournament = _tournamentService.GetByTitle(title);
@@ -26,17 +29,30 @@ namespace GameTournamentAPI.Controllers
                 return Ok(new[] { tournament });
             }
             return Ok(_tournamentService.GetAll());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Unexpected error: {ex.Message}");
+            }
         }
 
         [HttpPost]
         public ActionResult<IEnumerable<TournamentCreateDTO>> Create(TournamentCreateDTO dto)
         {
+            try
+            {
             var createdTournament = _tournamentService.Create(dto);
             return CreatedAtAction(
                     nameof(Get),
                     new { id = createdTournament.Id },
                     createdTournament
         );
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Unexpected error: {ex.Message}");
+            }
         }
 
     }
