@@ -1,4 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using GameTournamentAPI.Converters;
+
 
 namespace GameTournamentAPI.Models
 {
@@ -14,6 +18,7 @@ namespace GameTournamentAPI.Models
         public int MaxPlayers { get; set; }
         [Required]
  
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Date { get; set; } 
     }
 }

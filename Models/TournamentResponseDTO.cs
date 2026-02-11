@@ -14,6 +14,7 @@ namespace GameTournamentAPI.Models
 
         public static TournamentResponseDTO FromEntity (Tournament tournament)
         {
+          
             return new TournamentResponseDTO
             {
                 Id = tournament.Id,

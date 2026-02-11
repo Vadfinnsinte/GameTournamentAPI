@@ -1,6 +1,6 @@
 using GameTournamentAPI.Services;
 using Microsoft.OpenApi;
-
+using GameTournamentAPI.Converters;
 
 namespace GameTournamentAPI
 {
@@ -13,7 +13,7 @@ namespace GameTournamentAPI
        
             builder.Services.AddOpenApi(options =>
             {
-                // fix date in Swagger
+                // fix date format in Swagger
                 options.AddSchemaTransformer((schema, context, cancellationToken) =>
                 {
                    
@@ -28,7 +28,12 @@ namespace GameTournamentAPI
                 });
             });
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                 .AddJsonOptions(options =>
+                 {
+                     // Lägg till vår custom DateTime converter
+                     options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+                 });
 
 
 
