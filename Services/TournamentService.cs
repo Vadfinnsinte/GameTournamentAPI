@@ -5,8 +5,6 @@ namespace GameTournamentAPI.Services
     public class TournamentService
     {
         private readonly List<Tournament> _tournaments = new();
-        //private int _nextId = 1;
-
 
         public IEnumerable<TournamentResponseDTO> GetAll()
         {

@@ -31,7 +31,7 @@ namespace GameTournamentAPI
             builder.Services.AddControllers()
                  .AddJsonOptions(options =>
                  {
-                     // Lägg till vår custom DateTime converter
+                     //always run converter on dateTime in controllers
                      options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                  });
 
@@ -54,9 +54,7 @@ namespace GameTournamentAPI
                 });
             }
 
-        
-
-        app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
