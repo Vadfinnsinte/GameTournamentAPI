@@ -28,18 +28,14 @@ namespace GameTournamentAPI
                 });
             });
 
-            builder.Services.AddControllers()
-                 .AddJsonOptions(options =>
-                 {
-                     //always run converter on dateTime in controllers
-                     options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
-                 });
+            builder.Services.AddControllers();
+   
 
 
-
+            // Change when adding EF: 
             builder.Services.AddSingleton<TournamentService>();
             builder.Services.AddSingleton<GameService>();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+           
 
 
             var app = builder.Build();
