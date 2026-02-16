@@ -1,8 +1,8 @@
 ﻿using GameTournamentAPI.Converters;
-using GameTournamentAPI.Models;
+using GameTournamentAPI.Models.GameDTOs;
 using System.Text.Json.Serialization;
 
-namespace GameTournamentAPI.Models
+namespace GameTournamentAPI.Models.TournamentDTOs
 {
     public class TournamentResponseDTO
     {

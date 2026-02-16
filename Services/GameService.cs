@@ -1,4 +1,5 @@
 ﻿using GameTournamentAPI.Models;
+using GameTournamentAPI.Models.GameDTOs;
 
 namespace GameTournamentAPI.Services
 {

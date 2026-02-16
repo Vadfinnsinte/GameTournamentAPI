@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GameTournamentAPI.Models
+namespace GameTournamentAPI.Models.GameDTOs
 {
-    public class GameUpdateDTO
+    public class GameCreateDTO
     {
         [Required]
         [MinLength(3, ErrorMessage = "Title måste vara minst 3 tecken")]
@@ -10,7 +10,7 @@ namespace GameTournamentAPI.Models
 
         [Required]
         public DateTime Date { get; set; }
-
-
+        [Required]
+        public Guid TournamentId { get; set; }
     }
 }

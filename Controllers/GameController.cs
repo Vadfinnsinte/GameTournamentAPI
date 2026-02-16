@@ -1,4 +1,4 @@
-﻿using GameTournamentAPI.Models;
+﻿using GameTournamentAPI.Models.GameDTOs;
 using GameTournamentAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 

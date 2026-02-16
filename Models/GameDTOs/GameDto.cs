@@ -1,4 +1,4 @@
-﻿namespace GameTournamentAPI.Models
+﻿namespace GameTournamentAPI.Models.GameDTOs
 {
     public class GameDto
     {
