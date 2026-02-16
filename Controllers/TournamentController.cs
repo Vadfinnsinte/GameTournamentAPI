@@ -35,6 +35,21 @@ namespace GameTournamentAPI.Controllers
                 return StatusCode(500, $"Unexpected error: {ex.Message}");
             }
         }
+        [HttpGet("{id:Guid}")]
+        public ActionResult<TournamentResponseDTO> Get(Guid id)
+        {
+            try
+            {
+            var tournament = _tournamentService.GetById(id);
+            if (tournament == null) return NotFound();
+            return Ok( tournament );
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Unexpected error: {ex.Message}");
+            }
+        }
 
         [HttpPost]
         public ActionResult<IEnumerable<TournamentCreateDTO>> Create(TournamentCreateDTO dto)
@@ -55,5 +70,33 @@ namespace GameTournamentAPI.Controllers
             }
         }
 
+        [HttpPut("{id:Guid}")]
+        public ActionResult Update(Guid id, TournamentUpdateDTO tournament)
+        {
+            try
+            {
+                if (!_tournamentService.Update(id, tournament)) return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Unexpected error: {ex.Message}");
+            }
+
+        }
+
+        [HttpDelete("{id:Guid}")]
+        public ActionResult Delete(Guid id)
+        {
+            try
+            {
+                if (!_tournamentService.Delete(id)) return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Unexpected error: {ex.Message}");
+            }
+        }
     }
 }

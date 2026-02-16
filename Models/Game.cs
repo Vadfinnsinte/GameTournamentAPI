@@ -9,7 +9,7 @@ namespace GameTournamentAPI.Models
 
         public DateTime dateTime { get; set; }
 
-        public int TournamentId { get; set; }
+        public Guid TournamentId { get; set; }
 
         public Tournament Tournament { get; set; } = null!;
 

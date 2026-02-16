@@ -21,7 +21,7 @@ namespace GameTournamentAPI
                     {
                         schema.Type = JsonSchemaType.String;
                         schema.Format = "yyyy-MM-dd HH:mm";
-                        schema.Example = "2026-02-11 15:42";
+                        schema.Example = "2026-08-23 15:42";
                     }
 
                     return Task.CompletedTask;

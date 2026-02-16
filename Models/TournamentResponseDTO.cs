@@ -1,4 +1,6 @@
-﻿using GameTournamentAPI.Models;
+﻿using GameTournamentAPI.Converters;
+using GameTournamentAPI.Models;
+using System.Text.Json.Serialization;
 
 namespace GameTournamentAPI.Models
 {
@@ -8,6 +10,9 @@ namespace GameTournamentAPI.Models
         public string Title { get; set; } = "";
 
         public int MaxPlayers { get; set; }
+
+
+        [JsonConverter(typeof(DateTimeConverter))]
         public DateTime Date { get; set; }
         public ICollection<GameDto> Games { get; set; } = new List<GameDto>();
         
