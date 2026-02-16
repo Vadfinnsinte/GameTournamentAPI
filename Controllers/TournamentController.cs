@@ -9,11 +9,11 @@ namespace GameTournamentAPI.Controllers
     public class TournamentController : ControllerBase
     {
 
-        private readonly TournamentService _tournamentService;
+        private readonly TournamentService _gameService;
 
         public TournamentController(TournamentService tournamentService)
         {
-            _tournamentService = tournamentService;
+            _gameService = tournamentService;
         }
 
         [HttpGet]
@@ -24,11 +24,11 @@ namespace GameTournamentAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(title))
             {
-                var tournament = _tournamentService.GetByTitle(title);
+                var tournament = _gameService.GetByTitle(title);
                 if (tournament == null) return NotFound();
                 return Ok(new[] { tournament });
             }
-            return Ok(_tournamentService.GetAll());
+            return Ok(_gameService.GetAll());
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace GameTournamentAPI.Controllers
         {
             try
             {
-            var tournament = _tournamentService.GetById(id);
+            var tournament = _gameService.GetById(id);
             if (tournament == null) return NotFound();
             return Ok( tournament );
 
@@ -56,7 +56,7 @@ namespace GameTournamentAPI.Controllers
         {
             try
             {
-            var createdTournament = _tournamentService.Create(dto);
+            var createdTournament = _gameService.Create(dto);
             return CreatedAtAction(
                     nameof(Get),
                     new { id = createdTournament.Id },
@@ -75,7 +75,7 @@ namespace GameTournamentAPI.Controllers
         {
             try
             {
-                if (!_tournamentService.Update(id, tournament)) return NotFound();
+                if (!_gameService.Update(id, tournament)) return NotFound();
                 return NoContent();
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace GameTournamentAPI.Controllers
         {
             try
             {
-                if (!_tournamentService.Delete(id)) return NotFound();
+                if (!_gameService.Delete(id)) return NotFound();
                 return NoContent();
             }
             catch (Exception ex)

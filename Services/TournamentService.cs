@@ -23,7 +23,10 @@ namespace GameTournamentAPI.Services
             var tournament = _tournaments.FirstOrDefault(i => i.Id == id);
             return TournamentResponseDTO.FromEntity(tournament);
         }
-
+        public Tournament? GetEntityById(Guid id)
+        {
+            return _tournaments.FirstOrDefault(t => t.Id == id);
+        }
         public TournamentResponseDTO Create(TournamentCreateDTO dto)
         {
             var tournament = new Tournament

@@ -38,8 +38,9 @@ namespace GameTournamentAPI
 
 
             builder.Services.AddSingleton<TournamentService>();
+            builder.Services.AddSingleton<GameService>();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-         
+
 
             var app = builder.Build();
 
