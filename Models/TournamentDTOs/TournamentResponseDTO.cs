@@ -29,7 +29,8 @@ namespace GameTournamentAPI.Models.TournamentDTOs
                 Games = tournament.Games.Select(g => new GameDto
                 {
                     Id = g.Id,
-                    Title = g.Title
+                    Title = g.Title,
+                    Date = g.Date
                 }).ToList()
             };
             }
