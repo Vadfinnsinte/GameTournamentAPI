@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GameTournamentAPI.Controllers
 {
     [ApiController]
-    [Route("api/game")]
+    [Route("api/games")]
     public class GameController : ControllerBase
     {
         private readonly GameService _gameService;
@@ -45,13 +45,12 @@ namespace GameTournamentAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<IEnumerable<GameCreateDTO>>> Create(GameCreateDTO dto)
         {
-       
-                var createdgame = await _gameService.CreateAsync(dto);
-                return CreatedAtAction(
-                        nameof(Get),
-                        new { id = createdgame.Id },
-                        createdgame
-            );
+            
+            var createdgame = await _gameService.CreateAsync(dto);
+            if (createdgame == null ) return NotFound();
+
+
+            return Ok(createdgame);
 
 
         }
