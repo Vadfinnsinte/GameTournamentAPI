@@ -1,5 +1,6 @@
 ﻿using GameTournamentAPI.Models.GameDTOs;
 using GameTournamentAPI.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameTournamentAPI.Controllers
@@ -45,17 +46,24 @@ namespace GameTournamentAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<IEnumerable<GameCreateDTO>>> Create(GameCreateDTO dto)
         {
-            
-            var createdgame = await _gameService.CreateAsync(dto);
-            if (createdgame == null ) return NotFound();
+
+            try
+            {
+                var createdgame = await _gameService.CreateAsync(dto);
+                if (createdgame == null) return NotFound();
 
 
-            return Ok(createdgame);
+                return Created($"/api/games/{createdgame.Id}", createdgame);
 
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
 
+            }
         }
 
-        [HttpPut("{id:Guid}")]
+            [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Update(Guid id, GameUpdateDTO game)
         {
 

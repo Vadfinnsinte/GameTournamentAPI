@@ -48,9 +48,10 @@ namespace GameTournamentAPI.Controllers
       
             var createdTournament = await _tournamentService.CreateAsync(dto);
 
-            return Ok(createdTournament);
-        
-        
+            return Created($"/api/tournaments/{createdTournament.Id}", createdTournament);
+
+
+
         }
 
         [HttpPut("{id:Guid}")]
