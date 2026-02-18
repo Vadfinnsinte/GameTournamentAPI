@@ -9,94 +9,75 @@ namespace GameTournamentAPI.Controllers
     public class TournamentController : ControllerBase
     {
 
-        private readonly TournamentService _gameService;
+        private readonly TournamentService _tournamentService;
 
         public TournamentController(TournamentService tournamentService)
         {
-            _gameService = tournamentService;
+            _tournamentService = tournamentService;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TournamentResponseDTO>> Get([FromQuery] string? title)
+        public async Task<ActionResult<IEnumerable<TournamentResponseDTO>>> Get([FromQuery] string? title)
         {
-            try
-            {
-
+ 
             if (!string.IsNullOrWhiteSpace(title))
             {
-                var tournament = _gameService.GetByTitle(title);
+                var tournament = await _tournamentService.GetByTitleAsync(title);
                 if (tournament == null) return NotFound();
                 return Ok(new[] { tournament });
             }
-            return Ok(_gameService.GetAll());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+            var tournaments = await _tournamentService.GetAllAsync();
+            return Ok(tournaments);
+
         }
         [HttpGet("{id:Guid}")]
-        public ActionResult<TournamentResponseDTO> Get(Guid id)
+        public async Task<ActionResult<TournamentResponseDTO>> Get(Guid id)
         {
-            try
-            {
-            var tournament = _gameService.GetById(id);
+       
+            var tournament = await _tournamentService.GetByIdAsync(id);
             if (tournament == null) return NotFound();
+
             return Ok( tournament );
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+           
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<TournamentCreateDTO>> Create(TournamentCreateDTO dto)
+        public async Task <ActionResult<IEnumerable<TournamentCreateDTO>>> Create(TournamentCreateDTO dto)
         {
-            try
-            {
-            var createdTournament = _gameService.Create(dto);
+      
+            var createdTournament = await _tournamentService.CreateAsync(dto);
             return CreatedAtAction(
                     nameof(Get),
                     new { id = createdTournament.Id },
                     createdTournament
         );
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+        
         }
 
         [HttpPut("{id:Guid}")]
-        public ActionResult Update(Guid id, TournamentUpdateDTO tournament)
+        public async Task <ActionResult> Update(Guid id, TournamentUpdateDTO tournament)
         {
-            try
-            {
-                if (!_gameService.Update(id, tournament)) return NotFound();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+            var existingTournament = await _tournamentService.UpdateAsync(id, tournament);
+                
+            if (!existingTournament) return NotFound();
+                
+            return NoContent();
+            
+           
 
         }
 
         [HttpDelete("{id:Guid}")]
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            try
-            {
-                if (!_gameService.Delete(id)) return NotFound();
+            var tournamentToDelete = await _tournamentService.DeleteAsync(id);
+             
+              if (!tournamentToDelete) return NotFound();
                 return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+            
+            
         }
     }
 }

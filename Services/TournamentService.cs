@@ -1,34 +1,48 @@
-﻿using GameTournamentAPI.Models;
+﻿using GameTournamentAPI.Data;
+using GameTournamentAPI.Models;
+using GameTournamentAPI.Models.GameDTOs;
 using GameTournamentAPI.Models.TournamentDTOs;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace GameTournamentAPI.Services
 {
     public class TournamentService
     {
-        private readonly List<Tournament> _tournaments = new();
-
-        public IEnumerable<TournamentResponseDTO> GetAll()
+        private readonly AppDbContext _context;
+        public TournamentService(AppDbContext context)
         {
-            return _tournaments.Select(TournamentResponseDTO.FromEntity);
+            _context = context;
         }
 
-        public TournamentResponseDTO? GetByTitle(string title)
+        public async Task <IEnumerable<TournamentResponseDTO>> GetAllAsync()
         {
-            var tournament = _tournaments.FirstOrDefault(t => t.Title == title);
-            if (tournament == null) return null;
+            return await _context.Tournaments
+                .Include(t => t.Games)
+                .Select(TournamentResponseDTO.FromEntity)
+                .ToListAsync(); 
+        }
 
-            return TournamentResponseDTO.FromEntity(tournament);
-        }
-        public TournamentResponseDTO GetById(Guid id)
+        public async Task<TournamentResponseDTO?> GetByTitleAsync(string title)
         {
-            var tournament = _tournaments.FirstOrDefault(i => i.Id == id);
-            return TournamentResponseDTO.FromEntity(tournament);
+        
+            return await _context.Tournaments
+                .Include(t => t.Games)
+                .Where(t => t.Title == title)
+                .Select(TournamentResponseDTO.FromEntity)
+                .FirstOrDefaultAsync();
         }
-        public Tournament? GetEntityById(Guid id)
+        public async Task<TournamentResponseDTO?> GetByIdAsync(Guid id)
         {
-            return _tournaments.FirstOrDefault(t => t.Id == id);
+            return await _context.Tournaments
+                .Include(t => t.Games)
+                .Where(t => t.Id == id)
+                .Select(TournamentResponseDTO.FromEntity)
+                .FirstOrDefaultAsync();
+           
         }
-        public TournamentResponseDTO Create(TournamentCreateDTO dto)
+
+        public async Task<TournamentResponseDTO> CreateAsync(TournamentCreateDTO dto)
         {
             var tournament = new Tournament
             {
@@ -37,15 +51,24 @@ namespace GameTournamentAPI.Services
                 MaxPlayers = dto.MaxPlayers,
                 Date = dto.Date
             };
-            _tournaments.Add(tournament);
+            _context.Tournaments.Add(tournament);
 
-            return TournamentResponseDTO.FromEntity(tournament);
+            await _context.SaveChangesAsync();
+
+            return new TournamentResponseDTO
+            {
+                Id = tournament.Id,
+                Title = tournament.Title,
+                MaxPlayers = tournament.MaxPlayers,
+                Date = tournament.Date,
+                Games = new List<GameDto>()
+            };
 
         }
 
-        public bool Update(Guid id, TournamentUpdateDTO tournament)
+        public async Task<bool> UpdateAsync(Guid id, TournamentUpdateDTO tournament)
         {
-            var existingTournament = _tournaments.FirstOrDefault(t => t.Id == id);
+            var existingTournament = await _context.Tournaments.FindAsync(id);
             if (existingTournament == null) return false;
 
 
@@ -53,17 +76,17 @@ namespace GameTournamentAPI.Services
             existingTournament.Description = tournament.Description;
             existingTournament.MaxPlayers = tournament.MaxPlayers;
             existingTournament.Date = tournament.Date;
-           
-
+            await _context.SaveChangesAsync();
             return true;
         }
 
-        public bool Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            var tourToRemove = _tournaments.FirstOrDefault(t => t.Id == id);
+            var tourToRemove = await _context.Tournaments.FindAsync(id);
             if (tourToRemove == null) return false;
 
-            _tournaments.Remove(tourToRemove);
+            _context.Tournaments.Remove(tourToRemove);
+            await _context.SaveChangesAsync();
             return true;
         }
     }
