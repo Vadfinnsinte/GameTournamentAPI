@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using GameTournamentAPI.Converters;
-
+using GameTournamentAPI.Models.Validation;
 
 namespace GameTournamentAPI.Models.TournamentDTOs
 {
@@ -20,7 +20,7 @@ namespace GameTournamentAPI.Models.TournamentDTOs
         [Required]
  
         [JsonConverter(typeof(DateTimeConverter))]
-        // lägg till date in past not allowed
+        [NotInPast]
         public DateTime Date { get; set; } 
     }
 }

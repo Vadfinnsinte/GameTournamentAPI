@@ -1,4 +1,5 @@
 ﻿using GameTournamentAPI.Converters;
+using GameTournamentAPI.Models.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -12,6 +13,7 @@ namespace GameTournamentAPI.Models.GameDTOs
 
         [Required]
         [JsonConverter(typeof(DateTimeConverter))]
+        [NotInPast]
         public DateTime Date { get; set; }
         [Required]
 
