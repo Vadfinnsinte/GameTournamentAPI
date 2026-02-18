@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GameTournamentAPI.Controllers
 {
     [ApiController]
-    [Route("api/tournament")]
+    [Route("api/tournaments")]
     public class TournamentController : ControllerBase
     {
 
@@ -47,13 +47,11 @@ namespace GameTournamentAPI.Controllers
         {
       
             var createdTournament = await _tournamentService.CreateAsync(dto);
-            return CreatedAtAction(
-                    nameof(Get),
-                    new { id = createdTournament.Id },
-                    createdTournament
-        );
 
-        
+            return Created($"/api/tournaments/{createdTournament.Id}", createdTournament);
+
+
+
         }
 
         [HttpPut("{id:Guid}")]
@@ -64,8 +62,6 @@ namespace GameTournamentAPI.Controllers
             if (!existingTournament) return NotFound();
                 
             return NoContent();
-            
-           
 
         }
 

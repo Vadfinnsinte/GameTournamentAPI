@@ -41,11 +41,13 @@ namespace GameTournamentAPI.Services
 
         public async Task<GameResponseDTO?> CreateAsync(GameCreateDTO dto)
         {
-            var tournamentExists = await _context.Tournaments
-           .AnyAsync(t => t.Id == dto.TournamentId);
+            var tournament = await _context.Tournaments
+            .FirstOrDefaultAsync(t => t.Id == dto.TournamentId);
 
-            if (!tournamentExists)
-                return null;
+            if (tournament == null) return null;
+
+            if (dto.Date < tournament.Date.AddMinutes(10))
+                throw new ArgumentException("Game must start at least 10 minutes after the tournament's start.");
 
             var game = new Game
             {
