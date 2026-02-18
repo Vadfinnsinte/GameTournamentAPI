@@ -1,3 +1,6 @@
+using GameTournamentAPI.Services;
+using Microsoft.OpenApi;
+using GameTournamentAPI.Converters;
 
 namespace GameTournamentAPI
 {
@@ -7,11 +10,33 @@ namespace GameTournamentAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+       
+            builder.Services.AddOpenApi(options =>
+            {
+                // fix date format in Swagger
+                options.AddSchemaTransformer((schema, context, cancellationToken) =>
+                {
+                   
+                    if (context.JsonTypeInfo.Type == typeof(DateTime))
+                    {
+                        schema.Type = JsonSchemaType.String;
+                        schema.Format = "yyyy-MM-dd HH:mm";
+                        schema.Example = "2026-08-23 15:42";
+                    }
+
+                    return Task.CompletedTask;
+                });
+            });
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+   
+
+
+            // Change when adding EF: 
+            builder.Services.AddSingleton<TournamentService>();
+            builder.Services.AddSingleton<GameService>();
+           
+
 
             var app = builder.Build();
 
@@ -26,9 +51,7 @@ namespace GameTournamentAPI
                 });
             }
 
-        
-
-        app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

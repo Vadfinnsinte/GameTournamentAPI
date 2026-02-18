@@ -4,12 +4,12 @@ namespace GameTournamentAPI.Models
 {
     public class Game
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Title { get; set; } = "";
 
-        public DateTime dateTime { get; set; }
+        public DateTime Date { get; set; }
 
-        public int TournamentId { get; set; }
+        public Guid TournamentId { get; set; }
 
         public Tournament Tournament { get; set; } = null!;
 
