@@ -1,6 +1,8 @@
-using GameTournamentAPI.Services;
-using Microsoft.OpenApi;
 using GameTournamentAPI.Converters;
+using GameTournamentAPI.Data;
+using GameTournamentAPI.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 namespace GameTournamentAPI
 {
@@ -10,13 +12,16 @@ namespace GameTournamentAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-       
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            );
+
             builder.Services.AddOpenApi(options =>
             {
                 // fix date format in Swagger
                 options.AddSchemaTransformer((schema, context, cancellationToken) =>
                 {
-                   
+
                     if (context.JsonTypeInfo.Type == typeof(DateTime))
                     {
                         schema.Type = JsonSchemaType.String;
@@ -29,13 +34,12 @@ namespace GameTournamentAPI
             });
 
             builder.Services.AddControllers();
-   
 
 
-            // Change when adding EF: 
-            builder.Services.AddSingleton<TournamentService>();
-            builder.Services.AddSingleton<GameService>();
-           
+
+            builder.Services.AddScoped<TournamentService>();
+            builder.Services.AddScoped<GameService>();
+
 
 
             var app = builder.Build();

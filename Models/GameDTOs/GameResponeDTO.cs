@@ -1,9 +1,10 @@
 ﻿using GameTournamentAPI.Converters;
+using System.Linq.Expressions;
 using System.Text.Json.Serialization;
 
 namespace GameTournamentAPI.Models.GameDTOs
 {
-    public class GameResponeDTO
+    public class GameResponseDTO
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Title { get; set; } = "";
@@ -13,15 +14,13 @@ namespace GameTournamentAPI.Models.GameDTOs
 
         public Guid TournamentId { get; set; }
 
-    public static GameResponeDTO FromEntity (Game game)
-        {
-            return new GameResponeDTO
+        public static Expression<Func<Game, GameResponseDTO>> FromEntity =>
+            g => new GameResponseDTO
             {
-                Id = game.Id,
-                Title = game.Title,
-                Date = game.Date,
-                TournamentId = game.TournamentId
+                Id = g.Id,
+                Title = g.Title,
+                Date = g.Date,
+                TournamentId = g.TournamentId
             };
-        }
     }
 }

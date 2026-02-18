@@ -1,41 +1,50 @@
-﻿using GameTournamentAPI.Models;
+﻿using GameTournamentAPI.Data;
+using GameTournamentAPI.Models;
 using GameTournamentAPI.Models.GameDTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameTournamentAPI.Services
 {
     public class GameService
     {
-        private readonly List<Game> _games = new();
-        private readonly TournamentService _tournamentService;
+        private readonly AppDbContext _context;
+   
 
-        public GameService(TournamentService tournamentService)
+        public GameService(AppDbContext context)
         {
-            _tournamentService = tournamentService;
+            _context = context;
         }
 
-        public IEnumerable<GameResponeDTO> GetAll()
+
+        public async Task<IEnumerable<GameResponseDTO>>GetAllAsync()
         {
-            return _games.Select(GameResponeDTO.FromEntity);
+            return  await _context.Games
+                .Select(GameResponseDTO.FromEntity)
+                .ToListAsync();
         }
 
-        public GameResponeDTO? GetByTitle(string title)
+        public async Task<GameResponseDTO?> GetByTitleAsync(string title)
         {
-            var game = _games.FirstOrDefault(t => t.Title == title);
-            if (game == null) return null;
-
-            return GameResponeDTO.FromEntity(game);
+            return await _context.Games
+                .Where(g => g.Title == title)
+                .Select(GameResponseDTO.FromEntity)
+                .FirstOrDefaultAsync();
+           
         }
-        public GameResponeDTO GetById(Guid id)
+        public async Task<GameResponseDTO?> GetByIdAsync(Guid id)
         {
-            var game = _games.FirstOrDefault(i => i.Id == id);
-            return GameResponeDTO.FromEntity(game);
+            return await _context.Games
+                .Where(g => g.Id == id)
+                .Select(GameResponseDTO.FromEntity)
+                .FirstOrDefaultAsync();
         }
 
-        public GameResponeDTO? Create(GameCreateDTO dto)
+        public async Task<GameResponseDTO?> CreateAsync(GameCreateDTO dto)
         {
-            var tournament = _tournamentService.GetEntityById(dto.TournamentId);
+            var tournamentExists = await _context.Tournaments
+           .AnyAsync(t => t.Id == dto.TournamentId);
 
-            if (tournament == null)
+            if (!tournamentExists)
                 return null;
 
             var game = new Game
@@ -43,31 +52,38 @@ namespace GameTournamentAPI.Services
                 Title = dto.Title,
                 TournamentId = dto.TournamentId,
                 Date = dto.Date,
-                Tournament = tournament
+           
             };
-            _games.Add(game);
-            tournament.Games.Add(game);
-            return GameResponeDTO.FromEntity(game);
+            _context.Games.Add(game);
+            await _context.SaveChangesAsync();
+            return new GameResponseDTO
+            {
+                Id = game.Id,
+                Title = game.Title,
+                Date = game.Date,
+                TournamentId = game.TournamentId
+            };
 
         }
 
-        public bool Update(Guid id, GameUpdateDTO game)
+        public async Task<bool> UpdateAsync(Guid id, GameUpdateDTO game)
         {
-            var existingGames = _games.FirstOrDefault(t => t.Id == id);
-            if (existingGames == null) return false;
+            var existingGame = await _context.Games.FindAsync(id);
+            if (existingGame == null) return false;
 
-            existingGames.Title = game.Title;
-            existingGames.Date = game.Date;
-
+            existingGame.Title = game.Title;
+            existingGame.Date = game.Date;
+            await _context.SaveChangesAsync();
             return true;
         }
 
-        public bool Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            var gameToRemove = _games.FirstOrDefault(t => t.Id == id);
+            var gameToRemove = await _context.Games.FindAsync(id);
             if (gameToRemove == null) return false;
 
-            _games.Remove(gameToRemove);
+            _context.Remove(gameToRemove);
+            await _context.SaveChangesAsync();
             return true;
         }
     }

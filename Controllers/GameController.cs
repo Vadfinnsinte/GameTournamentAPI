@@ -16,86 +16,67 @@ namespace GameTournamentAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<GameResponeDTO>> Get([FromQuery] string? title)
+        public async Task <ActionResult<IEnumerable<GameResponseDTO>>> Get([FromQuery] string? title)
         {
-            try
-            {
-
+     
                 if (!string.IsNullOrWhiteSpace(title))
                 {
-                    var game = _gameService.GetByTitle(title);
+                    var game = await _gameService.GetByTitleAsync(title);
                     if (game == null) return NotFound();
                     return Ok(new[] { game });
                 }
-                return Ok(_gameService.GetAll());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+            var games = await _gameService.GetAllAsync();
+            return Ok(games);
+            
+           
         }
-        [HttpGet("{id:Guid}")]
-        public ActionResult<GameResponeDTO> Get(Guid id)
-        {
-            try
-            {
-                var game = _gameService.GetById(id);
-                if (game == null) return NotFound();
-                return Ok(game);
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+        [HttpGet("{id:Guid}")]
+        public async Task<ActionResult<GameResponseDTO>> Get(Guid id)
+        {
+            var game = await _gameService.GetByIdAsync(id);
+            if (game == null) return NotFound();
+            
+            return Ok(game);
+
+            
         }
 
         [HttpPost]
-        public ActionResult<IEnumerable<GameCreateDTO>> Create(GameCreateDTO dto)
+        public async Task<ActionResult<IEnumerable<GameCreateDTO>>> Create(GameCreateDTO dto)
         {
-            try
-            {
-                var createdgame = _gameService.Create(dto);
+       
+                var createdgame = await _gameService.CreateAsync(dto);
                 return CreatedAtAction(
                         nameof(Get),
                         new { id = createdgame.Id },
                         createdgame
             );
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+
         }
 
         [HttpPut("{id:Guid}")]
-        public ActionResult Update(Guid id, GameUpdateDTO game)
+        public async Task<ActionResult> Update(Guid id, GameUpdateDTO game)
         {
-            try
-            {
-                if (!_gameService.Update(id, game)) return NotFound();
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
 
+            var updated = await _gameService.UpdateAsync(id, game);
+            if (!updated) return NotFound();
+
+            return NoContent();
         }
+            
+
+        
 
         [HttpDelete("{id:Guid}")]
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            try
-            {
-                if (!_gameService.Delete(id)) return NotFound();
+            var deleted = await _gameService.DeleteAsync(id);
+                if (!deleted) return NotFound();
+
                 return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Unexpected error: {ex.Message}");
-            }
+           
         }
 
     }
